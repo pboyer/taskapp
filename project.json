@@ -1,0 +1,9 @@
+{
+  "name": "taskapp",
+	"profile": "taskapp",
+	"description": "A simple todo application implemented with modern serverless tech.",
+  "memory": 128,
+  "timeout": 5,
+  "role": "arn:aws:iam::166473545606:role/taskapp_lambda_function",
+  "environment": {}
+}
