@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strconv"
 	"time"
 
 	uuid "github.com/satori/go.uuid"
@@ -31,7 +32,7 @@ func (t *Task) Validate() error {
 	}
 
 	if err := t.validateDescription(); err != nil {
-		return fmt.Errorf("The 'priority' attribute is invalid: %v", err)
+		return fmt.Errorf("The 'description' attribute is invalid: %v", err)
 	}
 
 	if err := t.validatePriority(); err != nil {
@@ -39,10 +40,50 @@ func (t *Task) Validate() error {
 	}
 
 	if err := t.validateCompleted(); err != nil {
-		return fmt.Errorf("The 'priority' attribute is invalid: %v", err)
+		return fmt.Errorf("The 'completed' attribute is invalid: %v", err)
 	}
 
 	return nil
+}
+
+func NewTaskFromAttributeValueMap(m map[string]*dynamodb.AttributeValue) (*Task, error) {
+	task := &Task{}
+
+	if id, ok := m["id"]; ok {
+		task.ID = id.S
+	}
+
+	if user, ok := m["user"]; ok {
+		task.User = user.S
+	}
+
+	if description, ok := m["description"]; ok {
+		task.Description = description.S
+	}
+
+	if priority, ok := m["priority"]; ok {
+		num, err := strconv.ParseUint(*priority.N, 10, 32)
+
+		if err != nil {
+			return nil, fmt.Errorf("Unexpected error parsing priority from database: %v", err)
+		}
+
+		num32 := uint32(num)
+		task.Priority = &num32
+	}
+
+	if completed, ok := m["completed"]; ok {
+		task.Completed = completed.N
+	}
+
+	// This validate step should never fail as its decoding data already entered into the DB.
+	// We do it anyways to avoid serving up invalid content in the event of failure. It could be
+	// turned off in future builds if performance justifies it.
+	if err := task.Validate(); err != nil {
+		return nil, err
+	}
+
+	return task, nil
 }
 
 // ToAttributeValueMap turns the Task as an AttributeValue map for use in Amazon DynamoDB API's. This function

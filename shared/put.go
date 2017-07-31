@@ -43,7 +43,7 @@ func PutFunc(generateNewID bool) func(event json.RawMessage, actx *apex.Context)
 		})
 
 		if err != nil {
-			// TODO log for reconaissance
+			// TODO log for reconaissance, give unique error code
 			return nil, errors.New("Failed to write to DynamoDB")
 		}
 

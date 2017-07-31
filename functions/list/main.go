@@ -63,11 +63,33 @@ func main() {
 
 		keyCond := strings.Join(keyConds, " and ")
 
-		return svc.Query(&dynamodb.QueryInput{
+		input := &dynamodb.ScanInput{
 			TableName:                 &tableName,
-			KeyConditionExpression:    &keyCond,
+			FilterExpression:          &keyCond,
 			ExpressionAttributeValues: expAttValues,
-			ExpressionAttributeNames:  expAttNames,
-		})
+		}
+
+		if len(expAttNames) > 0 {
+			input.ExpressionAttributeNames = expAttNames
+		}
+
+		result, err := svc.Scan(input)
+
+		if err != nil {
+			// TODO log for reconaissance, give unique error code
+			return nil, fmt.Errorf("Internal error: %v", err)
+		}
+
+		items := make([]*taskapp.Task, len(result.Items))
+		for i, v := range result.Items {
+			task, err := taskapp.NewTaskFromAttributeValueMap(v)
+			if err != nil {
+				// TODO log for reconaissance, give unique error code
+				return nil, fmt.Errorf("Internal error: %v", err)
+			}
+			items[i] = task
+		}
+
+		return items, nil
 	})
 }
