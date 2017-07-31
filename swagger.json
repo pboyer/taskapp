@@ -36,6 +36,12 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          },
           "405": {
             "description": "Invalid input"
           }
@@ -73,26 +79,23 @@
             "description": "Validation exception"
           }
         }
-      },
+      }
+    },
+    "/task/{taskId}": {
       "delete": {
         "summary": "Delete a task",
         "description": "",
         "operationId": "deleteTask",
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "description": "Task to add",
+            "name": "taskId",
+            "in": "path",
+            "description": "ID of task to delete",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/Task"
-            }
+            "type": "string"
           }
         ],
         "responses": {
@@ -100,10 +103,7 @@
             "description": "Invalid ID supplied"
           },
           "404": {
-            "description": "task not found"
-          },
-          "405": {
-            "description": "Validation exception"
+            "description": "Task not found"
           }
         }
       }
@@ -118,21 +118,33 @@
         ],
         "parameters": [
           {
-            "name": "status",
+            "name": "user",
             "in": "query",
-            "description": "Status values that need to be considered for filter",
-            "required": true,
-            "type": "array",
-            "items": {
-              "type": "string",
-              "enum": [
-                "available",
-                "pending",
-                "sold"
-              ],
-              "default": "available"
-            },
-            "collectionFormat": "multi"
+            "description": "User to filter by",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "description": "Priority to filter by",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "description": "Description to filter by",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "completed",
+            "in": "query",
+            "description": "Completed time to filter by",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -190,21 +202,6 @@
         }
       },
       "required": ["description", "priority"]
-    },
-    "ApiResponse": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "type": {
-          "type": "string"
-        },
-        "message": {
-          "type": "string"
-        }
-      }
     }
   }
 }

@@ -4,7 +4,7 @@ Install apex:
 $ ./devenv.sh
 ```
 
-Project initialized with: (TODO commit this?)
+Project initialized with:
 
 ```
 $ ./init.sh

@@ -14,7 +14,7 @@ import (
 )
 
 // PutFunc provides a function that adds or updates a task based on the event JSON. Setting generateNewID to true
-// causes a new Task ID to be generated, appropriate for insertion of a new id
+// causes a new Task ID to be generated, appropriate for insertion of a new task into the db
 func PutFunc(generateNewID bool) func(event json.RawMessage, actx *apex.Context) (interface{}, error) {
 	svc := dynamodb.New(session.New(&aws.Config{
 		Region: aws.String(DefaultAWSRegion),
