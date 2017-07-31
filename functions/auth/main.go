@@ -9,6 +9,7 @@ import (
 
 type request struct {
 	authorizationToken *string `json:"authorizationToken"`
+	methodArn          *string `json:"methodArn"`
 }
 
 func main() {
