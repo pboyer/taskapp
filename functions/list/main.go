@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 
 	apex "github.com/apex/go-apex"
 	taskapp "github.com/pboyer/taskapp/shared"
@@ -12,27 +14,60 @@ import (
 )
 
 func main() {
+	svc := dynamodb.New(session.New(&aws.Config{
+		Region: aws.String(taskapp.DefaultAWSRegion),
+	}))
+
 	apex.HandleFunc(func(event json.RawMessage, actx *apex.Context) (interface{}, error) {
-		svc := dynamodb.New(session.New(&aws.Config{
-			Region: aws.String(taskapp.DefaultAWSRegion),
-		}))
+		var task taskapp.Task
+
+		if err := json.Unmarshal(event, &task); err != nil {
+			return nil, fmt.Errorf("Failed to parse input: %v", err)
+		}
 
 		tableName := taskapp.DefaultTableName
-		keyCond := "#user = :u"
-		user := "peter."
-		userFieldName := "user"
+
+		keyConds := []string{}
+		expAttNames := map[string]*string{}
+		expAttValues := map[string]*dynamodb.AttributeValue{}
+
+		if task.ID != nil {
+			keyConds = append(keyConds, "id = :i")
+			expAttValues[":i"] = &dynamodb.AttributeValue{S: task.ID}
+		}
+
+		if task.User != nil {
+			keyConds = append(keyConds, "#user = :u")
+			expAttValues[":u"] = &dynamodb.AttributeValue{S: task.User}
+
+			// must be remapped as it is a reserved field name
+			userFieldName := "user"
+			expAttNames["#user"] = &userFieldName
+		}
+
+		if task.Description != nil {
+			keyConds = append(keyConds, "description = :d")
+			expAttValues[":d"] = &dynamodb.AttributeValue{S: task.Description}
+		}
+
+		if task.Priority != nil {
+			priorityStr := fmt.Sprintf("%d", *task.Priority)
+			keyConds = append(keyConds, "priority = :p")
+			expAttValues[":p"] = &dynamodb.AttributeValue{N: &priorityStr}
+		}
+
+		if task.Completed != nil {
+			keyConds = append(keyConds, "completed = :c")
+			expAttValues[":c"] = &dynamodb.AttributeValue{S: task.Completed}
+		}
+
+		keyCond := strings.Join(keyConds, " and ")
 
 		return svc.Query(&dynamodb.QueryInput{
-			TableName:              &tableName,
-			KeyConditionExpression: &keyCond,
-			ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
-				":u": &dynamodb.AttributeValue{
-					S: &user,
-				},
-			},
-			ExpressionAttributeNames: map[string]*string{
-				"#user": &userFieldName,
-			},
+			TableName:                 &tableName,
+			KeyConditionExpression:    &keyCond,
+			ExpressionAttributeValues: expAttValues,
+			ExpressionAttributeNames:  expAttNames,
 		})
 	})
 }

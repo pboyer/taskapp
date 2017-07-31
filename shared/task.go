@@ -20,7 +20,7 @@ type Task struct {
 	Completed   *string `json:"completed"`
 }
 
-// Validate checks the Task according to its schema.
+// Validate validates the Task according to its schema.
 func (t *Task) Validate() error {
 	if err := t.validateID(); err != nil {
 		return fmt.Errorf("The 'id' attribute is invalid: %v", err)
@@ -45,17 +45,34 @@ func (t *Task) Validate() error {
 	return nil
 }
 
-// ToAttributeValueMap turns the Task into an attribute value map for use in Amazon DynamoDB API's
+// ToAttributeValueMap turns the Task as an AttributeValue map for use in Amazon DynamoDB API's. This function
+// does not validate the Task nor does it assume validation was completed.
 func (t *Task) ToAttributeValueMap() map[string]*dynamodb.AttributeValue {
-	priorityStr := fmt.Sprintf("%d", *t.Priority)
+	res := map[string]*dynamodb.AttributeValue{}
 
-	return map[string]*dynamodb.AttributeValue{
-		"id":          &dynamodb.AttributeValue{S: t.ID},
-		"user":        &dynamodb.AttributeValue{S: t.User},
-		"description": &dynamodb.AttributeValue{S: t.Description},
-		"priority":    &dynamodb.AttributeValue{N: &priorityStr},
-		"completed":   &dynamodb.AttributeValue{S: t.Completed},
+	if t.ID != nil {
+		res["id"] = &dynamodb.AttributeValue{S: t.ID}
 	}
+
+	if t.User != nil {
+		res["user"] = &dynamodb.AttributeValue{S: t.User}
+	}
+
+	if t.Description != nil {
+		res["description"] = &dynamodb.AttributeValue{S: t.Description}
+	}
+
+	if t.Priority != nil {
+		// must be transmitted as a number
+		priorityStr := fmt.Sprintf("%d", *t.Priority)
+		res["priority"] = &dynamodb.AttributeValue{N: &priorityStr}
+	}
+
+	if t.Completed != nil {
+		res["completed"] = &dynamodb.AttributeValue{S: t.Completed}
+	}
+
+	return res
 }
 
 var (
