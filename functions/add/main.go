@@ -3,26 +3,28 @@ package main
 import (
 	"encoding/json"
 
-	apex "github.com/apex/go-apex"
 	taskapp "github.com/pboyer/taskapp/shared"
+
+	apex "github.com/apex/go-apex"
+	uuid "github.com/satori/go.uuid"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
-type request struct {
-	User        *string `json:"user"`
-	Description *string `json:"description"` // required
-	Priority    *uint32 `json:"priority"`    // required
-	Completed   *string `json:"completed"`
-}
-
 func main() {
 	apex.HandleFunc(func(event json.RawMessage, actx *apex.Context) (interface{}, error) {
-		var m request
+		var t taskapp.Task
 
-		if err := json.Unmarshal(event, &m); err != nil {
+		if err := json.Unmarshal(event, &t); err != nil {
+			return nil, err
+		}
+
+		newid := uuid.NewV4().String()
+		t.ID = &newid
+
+		if err := t.Validate(); err != nil {
 			return nil, err
 		}
 
@@ -30,15 +32,10 @@ func main() {
 			Region: aws.String(taskapp.DefaultAWSRegion),
 		}))
 
-		tableName := taskapp.TableName
-		completedDefault := "0"
-
+		tableName := taskapp.DefaultTableName
 		return svc.PutItem(&dynamodb.PutItemInput{
 			TableName: &tableName,
-			Item: map[string]*dynamodb.AttributeValue{
-				"user":      &dynamodb.AttributeValue{S: m.User},
-				"completed": &dynamodb.AttributeValue{S: &completedDefault},
-			},
+			Item:      t.ToAttributeValueMap(),
 		})
 	})
 }

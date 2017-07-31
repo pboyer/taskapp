@@ -17,9 +17,9 @@ func main() {
 			Region: aws.String(taskapp.DefaultAWSRegion),
 		}))
 
-		tableName := "taskapp"
+		tableName := taskapp.DefaultTableName
 		keyCond := "#user = :u"
-		user := "foobar"
+		user := "peter."
 		userFieldName := "user"
 
 		return svc.Query(&dynamodb.QueryInput{

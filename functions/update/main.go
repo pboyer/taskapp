@@ -27,7 +27,7 @@ func main() {
 			Region: aws.String(taskapp.DefaultAWSRegion),
 		}))
 
-		tableName := taskapp.TableName
+		tableName := taskapp.DefaultTableName
 		completedDefault := "0"
 
 		return svc.PutItem(&dynamodb.PutItemInput{
