@@ -1,0 +1,210 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Simple task list app",
+    "version": "1.0.0",
+    "title": "Task App",
+    "contact": {
+      "email": "peter.b.boyer@gmail.com"
+    }
+  },
+  "basePath": "/v1",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/task": {
+      "post": {
+        "summary": "Add a task",
+        "description": "",
+        "operationId": "addTask",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Task object to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a task",
+        "description": "",
+        "operationId": "updateTask",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Task object to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "task not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a task",
+        "description": "",
+        "operationId": "deleteTask",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Task to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "task not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/task/list": {
+      "get": {
+        "summary": "Find tasks by user",
+        "description": "",
+        "operationId": "listTasks",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Status values that need to be considered for filter",
+            "required": true,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ],
+              "default": "available"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Task"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Task": {
+      "type": "object",
+      "title": "A task",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "Id",
+          "description": "RFC4122 UUID for the task"
+        },
+        "user": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 254,
+          "title": "User",
+          "description": "User's email address"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Description of the task"
+        },
+        "priority": {
+          "type": "integer",
+          "multipleOf": 1,
+          "maximum": 9,
+          "minimum": 0,
+          "title": "Priority",
+          "description": "Task priority, as a single-digit integer. 0 is highest priority"
+        },
+        "completed": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Completed",
+          "description": "Completed datetime, formatted as an ISO8601 string"
+        }
+      },
+      "required": ["description", "priority"]
+    },
+    "ApiResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
