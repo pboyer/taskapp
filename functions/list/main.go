@@ -28,6 +28,8 @@ func main() {
 			return nil, fmt.Errorf("Failed to parse input: %v", err)
 		}
 
+		return "true", nil
+
 		keyConds := []string{}
 		expAttNames := map[string]*string{}
 		expAttValues := map[string]*dynamodb.AttributeValue{}
