@@ -1,0 +1,147 @@
+---
+swagger: '2.0'
+info:
+  description: Simple task list app
+  version: 1.0.0
+  title: Task App
+  contact:
+    email: peter.b.boyer@gmail.com
+basePath: "/v1"
+schemes:
+- http
+paths:
+  "/task":
+    post:
+      summary: Add a task
+      description: ''
+      operationId: addTask
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Task object to add
+        required: true
+        schema:
+          "$ref": "#/definitions/Task"
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            "$ref": "#/definitions/Task"
+        '405':
+          description: Invalid input
+    put:
+      summary: Update a task
+      description: ''
+      operationId: updateTask
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Task object to update
+        required: true
+        schema:
+          "$ref": "#/definitions/Task"
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: task not found
+        '405':
+          description: Validation exception
+  "/task/{taskId}":
+    delete:
+      summary: Delete a task
+      description: ''
+      operationId: deleteTask
+      produces:
+      - application/json
+      parameters:
+      - name: taskId
+        in: path
+        description: ID of task to delete
+        required: true
+        type: string
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Task not found
+  "/task/list":
+    get:
+      summary: List available tasks
+      description: ''
+      operationId: listTasks
+      produces:
+      - application/json
+      parameters:
+      - name: user
+        in: query
+        description: User to filter by
+        required: false
+        type: string
+      - name: priority
+        in: query
+        description: Priority to filter by
+        required: false
+        type: integer
+        format: int64
+      - name: description
+        in: query
+        description: Description to filter by
+        required: false
+        type: string
+      - name: completed
+        in: query
+        description: Completed datetime string to filter by
+        required: false
+        type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/Task"
+        '400':
+          description: Invalid status value
+definitions:
+  Task:
+    type: object
+    title: A task
+    properties:
+      id:
+        type: string
+        title: Id
+        description: RFC4122 UUID for the task
+      user:
+        type: string
+        minLength: 5
+        maxLength: 254
+        title: User
+        description: User's email address
+      description:
+        type: string
+        minLength: 1
+        title: Description of the task
+      priority:
+        type: integer
+        multipleOf: 1
+        maximum: 9
+        minimum: 0
+        title: Priority
+        description: Task priority, as a single-digit integer. 0 is highest priority
+      completed:
+        type: string
+        format: date-time
+        title: Completed
+        description: Completed datetime, formatted as an ISO8601 string
+    required:
+    - description
+    - priority

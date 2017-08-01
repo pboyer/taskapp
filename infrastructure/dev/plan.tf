@@ -4,14 +4,7 @@ provider "aws" {
   region     = "${var.region}"
 }
 
-// define dynamodb table
-// define iam policies
-// inject iam policies into functions
-// (apex inject lambdas)
-// define api gateway referencing the lambdas
-
-// DynamoDB table
-
+# DynamoDB
 resource "aws_dynamodb_table" "taskapp_table" {
   name           = "taskapp_terr"
   read_capacity  = 5
@@ -27,6 +20,32 @@ resource "aws_dynamodb_table" "taskapp_table" {
     command = "echo ${self.name} >> tablename.txt"
   }
 }
+
+# API Gateway
+resource "aws_api_gateway_rest_api" "api" {
+  name = "taskapp"
+}
+
+# Get
+resource "aws_api_gateway_method" "method" {
+  rest_api_id   = "${aws_api_gateway_rest_api.api.id}"
+  resource_id   = "${aws_api_gateway_rest_api.api.root_resource_id}"
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "integration" {
+  rest_api_id             = "${aws_api_gateway_rest_api.api.id}"
+  resource_id             = "${aws_api_gateway_rest_api.api.root_resource_id}"
+  http_method             = "${aws_api_gateway_method.method.http_method}"
+  integration_http_method = "POST"
+  type                    = "AWS"
+  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${var.apex_function_add}/invocations"
+}
+
+/*
+
+# Due to limitations with apex, it doesn't seem possible to use deploy specific IAM policies 
 
 resource "aws_iam_role" "test_role" {
   name = "test_role"
@@ -72,44 +91,4 @@ resource "aws_iam_role_policy" "test_policy" {
 EOF
 }
 
-
-
-
-/*
-
-resource "aws_api_gateway_rest_api" "taskapp" {
-  name        = "taskapp"
-  description = "This is my API for demonstration purposes"
-}
-
-resource "aws_api_gateway_resource" "MyDemoResource" {
-  rest_api_id = "${aws_api_gateway_rest_api.taskapp.id}"
-  parent_id   = "${aws_api_gateway_rest_api.taskapp.root_resource_id}"
-  path_part   = "test"
-}
-
-resource "aws_api_gateway_method" "taskapp_add" {
-  rest_api_id   = "${aws_api_gateway_rest_api.taskapp.id}"
-  resource_id   = "${aws_api_gateway_resource.MyDemoResource.id}"
-  http_method   = "GET"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "MyDemoIntegration" {
-  rest_api_id = "${aws_api_gateway_rest_api.taskapp.id}"
-  resource_id = "${aws_api_gateway_resource.MyDemoResource.id}"
-  http_method = "${aws_api_gateway_method.taskapp_add.http_method}"
-  type        = "LAMBDA"
-}
-
-resource "aws_api_gateway_deployment" "MyDemoDeployment" {
-  depends_on = ["aws_api_gateway_method.taskapp_add"]
-
-  rest_api_id = "${aws_api_gateway_rest_api.taskapp.id}"
-  stage_name  = "test"
-
-  variables = {
-    "answer" = "42"
-  }
-}
 */

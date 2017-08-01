@@ -4,3 +4,4 @@
 apex deploy
 
 # use terraform to deploy dynamodb, api gateway
+apex infra apply -var-file=secret.tfvars
