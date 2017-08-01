@@ -110,7 +110,7 @@
     },
     "/task/list": {
       "get": {
-        "summary": "Find tasks by user",
+        "summary": "List available tasks",
         "description": "",
         "operationId": "listTasks",
         "produces": [
@@ -142,7 +142,7 @@
           {
             "name": "completed",
             "in": "query",
-            "description": "Completed time to filter by",
+            "description": "Completed datetime string to filter by",
             "required": false,
             "type": "string"
           }

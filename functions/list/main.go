@@ -14,8 +14,11 @@ import (
 )
 
 func main() {
+	region := taskapp.AWSRegion()
+	tableName := taskapp.TableName()
+
 	svc := dynamodb.New(session.New(&aws.Config{
-		Region: aws.String(taskapp.DefaultAWSRegion),
+		Region: aws.String(region),
 	}))
 
 	apex.HandleFunc(func(event json.RawMessage, actx *apex.Context) (interface{}, error) {
@@ -24,8 +27,6 @@ func main() {
 		if err := json.Unmarshal(event, &task); err != nil {
 			return nil, fmt.Errorf("Failed to parse input: %v", err)
 		}
-
-		tableName := taskapp.DefaultTableName
 
 		keyConds := []string{}
 		expAttNames := map[string]*string{}

@@ -18,8 +18,11 @@ type request struct {
 }
 
 func main() {
+	region := taskapp.AWSRegion()
+	tableName := taskapp.TableName()
+
 	svc := dynamodb.New(session.New(&aws.Config{
-		Region: aws.String(taskapp.DefaultAWSRegion),
+		Region: aws.String(region),
 	}))
 
 	apex.HandleFunc(func(event json.RawMessage, actx *apex.Context) (interface{}, error) {
@@ -33,7 +36,6 @@ func main() {
 			return nil, errors.New("Deletion requires a task 'id'")
 		}
 
-		tableName := taskapp.DefaultTableName
 		return svc.DeleteItem(&dynamodb.DeleteItemInput{
 			TableName: &tableName,
 			Key: map[string]*dynamodb.AttributeValue{
