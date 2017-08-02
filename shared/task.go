@@ -169,7 +169,7 @@ func (t *Task) validateDescription() error {
 		return errors.New("'description' is a required attribute")
 	}
 
-	desc := *t.User
+	desc := *t.Description
 
 	if len(desc) < 1 {
 		return errors.New("The 'description' attribute must be at least 1 character long")

@@ -13,6 +13,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
+type response struct {
+	Items []*taskapp.Task `json:"items"`
+}
+
 func main() {
 	region := taskapp.AWSRegion()
 	tableName := taskapp.TableName()
@@ -25,7 +29,7 @@ func main() {
 		var task taskapp.Task
 
 		if err := json.Unmarshal(event, &task); err != nil {
-			return nil, fmt.Errorf("Failed to parse input: %v", err)
+			return nil, taskapp.BadRequest(fmt.Sprintf("Failed to parse input: %v", err))
 		}
 
 		keyConds := []string{}
@@ -93,6 +97,6 @@ func main() {
 			items[i] = task
 		}
 
-		return items, nil
+		return response{items}, nil
 	})
 }
