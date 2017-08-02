@@ -2,13 +2,14 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 
 	taskapp "github.com/pboyer/taskapp/shared"
 
 	apex "github.com/apex/go-apex"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
@@ -29,18 +30,31 @@ func main() {
 		var req request
 
 		if err := json.Unmarshal(event, &req); err != nil {
-			return nil, err
+			return nil, taskapp.BadRequest(fmt.Sprintf("%v", err))
 		}
 
 		if req.ID == nil {
-			return nil, errors.New("Error Deletion requires a task 'id'")
+			return nil, taskapp.BadRequest("Deletion requires a task 'id'")
 		}
 
-		return svc.DeleteItem(&dynamodb.DeleteItemInput{
+		_, err := svc.DeleteItem(&dynamodb.DeleteItemInput{
 			TableName: &tableName,
 			Key: map[string]*dynamodb.AttributeValue{
 				"id": &dynamodb.AttributeValue{S: req.ID},
 			},
 		})
+
+		if err != nil {
+			if aerr, ok := err.(awserr.Error); ok {
+				switch aerr.Code() {
+				case dynamodb.ErrCodeResourceNotFoundException:
+					return nil, taskapp.BadRequest("That id does not exist")
+				default:
+					return nil, taskapp.InternalServerError(err)
+				}
+			}
+		}
+
+		return "Success", nil
 	})
 }

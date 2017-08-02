@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 
 	apex "github.com/apex/go-apex"
@@ -71,8 +70,8 @@ func main() {
 			ExpressionAttributeValues: expAttValues,
 		}
 
-		if len(expAttValues) > 0 {
-			input.ExpressionAttributeNames = expAttNames
+		if len(expAttValues) == 0 {
+			return nil, taskapp.BadRequest("You must supply at least one filter parameter")
 		}
 
 		if len(expAttNames) > 0 {
@@ -82,18 +81,14 @@ func main() {
 		result, err := svc.Scan(input)
 
 		if err != nil {
-			// TODO log for reconaissance, give unique error code
-			fmt.Fprintln(os.Stderr, "Error in scan: %v", err)
-
-			return nil, fmt.Errorf("InternalError")
+			return nil, taskapp.InternalServerError(err)
 		}
 
 		items := make([]*taskapp.Task, len(result.Items))
 		for i, v := range result.Items {
 			task, err := taskapp.NewTaskFromAttributeValueMap(v)
 			if err != nil {
-				// TODO log for reconaissance, give unique error code
-				return nil, fmt.Errorf("InternalError")
+				return nil, taskapp.InternalServerError(err)
 			}
 			items[i] = task
 		}

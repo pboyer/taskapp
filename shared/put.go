@@ -2,7 +2,6 @@ package shared
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	apex "github.com/apex/go-apex"
@@ -27,7 +26,7 @@ func PutFunc(generateNewID bool) func(event json.RawMessage, actx *apex.Context)
 		var task Task
 
 		if err := json.Unmarshal(event, &task); err != nil {
-			return nil, fmt.Errorf("Failed to parse input: %v", err)
+			return nil, BadRequest(fmt.Sprintf("Failed to parse input: %v", err))
 		}
 
 		if generateNewID {
@@ -36,7 +35,7 @@ func PutFunc(generateNewID bool) func(event json.RawMessage, actx *apex.Context)
 		}
 
 		if err := task.Validate(); err != nil {
-			return nil, err
+			return nil, BadRequest(err)
 		}
 
 		_, err := svc.PutItem(&dynamodb.PutItemInput{
@@ -46,7 +45,7 @@ func PutFunc(generateNewID bool) func(event json.RawMessage, actx *apex.Context)
 
 		if err != nil {
 			// TODO log for reconaissance, give unique error code
-			return nil, errors.New("Failed to write to DynamoDB")
+			return nil, InternalServerError(err)
 		}
 
 		return task, nil

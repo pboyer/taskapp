@@ -86,7 +86,7 @@ resource "aws_api_gateway_integration_response" "response_method_integration_400
   resource_id = "${var.resource_id}"
   http_method = "${aws_api_gateway_method_response.response_method_400.http_method}"
   status_code = "${aws_api_gateway_method_response.response_method_400.status_code}"
-  selection_pattern = "BadRequest.*"
+  selection_pattern = "^[BadRequest].*"
   response_templates = {
     "application/json" = ""
   }
@@ -110,7 +110,7 @@ resource "aws_api_gateway_integration_response" "response_method_integration_500
   resource_id = "${var.resource_id}"
   http_method = "${aws_api_gateway_method_response.response_method_500.http_method}"
   status_code = "${aws_api_gateway_method_response.response_method_500.status_code}"
-  selection_pattern = "InternalServerError.*"
+  selection_pattern = "^[InternalServerError].*"
   response_templates = {
     "application/json" = ""
   }
