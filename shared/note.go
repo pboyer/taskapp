@@ -8,9 +8,9 @@ import (
 )
 
 type Note struct {
-	ID            *string   `json:"id"`   // DynamoDB partition key
-	Creator       *string   `json:"user"` // required
-	Text          *string   `json:"text"` // required
+	ID            *string   `json:"id"`      // DynamoDB partition key
+	Creator       *string   `json:"creator"` // required
+	Text          *string   `json:"text"`    // required
 	Collaborators []*string `json:"collaborators"`
 }
 
@@ -21,15 +21,15 @@ func (n *Note) Validate() error {
 	}
 
 	if err := n.validateCreator(); err != nil {
-		return fmt.Errorf("The 'user' attribute is invalid: %v", err)
+		return fmt.Errorf("The 'creator' attribute is invalid: %v", err)
 	}
 
 	if err := n.validateText(); err != nil {
-		return fmt.Errorf("The 'description' attribute is invalid: %v", err)
+		return fmt.Errorf("The 'text' attribute is invalid: %v", err)
 	}
 
 	if err := n.validateCollaborators(); err != nil {
-		return fmt.Errorf("The 'priority' attribute is invalid: %v", err)
+		return fmt.Errorf("The 'collabarators' attribute is invalid: %v", err)
 	}
 
 	return nil
@@ -59,28 +59,28 @@ func (n *Note) ToAttributeValueMap() map[string]*dynamodb.AttributeValue {
 	return res
 }
 
-func (t *Task) validateID() error {
-	if t.ID == nil {
+func (n *Note) validateID() error {
+	if n.ID == nil {
 		return errors.New("Attribute is required")
 	}
 
-	return validateIDString(*t.ID)
+	return validateIDString(*n.ID)
 }
 
-func (t *Task) validateCreator() error {
-	if t.Creator == nil {
+func (n *Note) validateCreator() error {
+	if n.Creator == nil {
 		return nil
 	}
 
-	return validateEmailString(*t.Creator)
+	return validateEmailString(*n.Creator)
 }
 
-func (t *Task) validateText() error {
-	if t.Text == nil {
+func (n *Note) validateText() error {
+	if n.Text == nil {
 		return errors.New("Attribute is required")
 	}
 
-	desc := *t.Text
+	desc := *n.Text
 
 	if len(desc) < 1 {
 		return errors.New("The attribute must be at least 1 character long")
@@ -89,6 +89,6 @@ func (t *Task) validateText() error {
 	return nil
 }
 
-func (t *Task) validateCollaborators() error {
+func (n *Note) validateCollaborators() error {
 	return nil
 }

@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"os"
 
 	apex "github.com/apex/go-apex"
 )
@@ -15,6 +17,7 @@ func main() {
 	// }))
 
 	apex.HandleFunc(func(event json.RawMessage, actx *apex.Context) (interface{}, error) {
+		fmt.Fprintf(os.Stderr, "Daily event!")
 
 		return "Success", nil
 	})

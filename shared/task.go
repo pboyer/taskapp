@@ -127,11 +127,11 @@ func (t *Task) validateID() error {
 		return errors.New("Attribute is required")
 	}
 
-	return validateIDString(s)
+	return validateIDString(*t.ID)
 }
 
 func validateIDString(s string) error {
-	if _, err := uuid.FromString(*t.ID); err != nil {
+	if _, err := uuid.FromString(s); err != nil {
 		return err
 	}
 
@@ -147,11 +147,11 @@ func (t *Task) validateUser() error {
 }
 
 func validateEmailString(s string) error {
-	if l := len(user); l < 5 || l > 254 {
+	if l := len(s); l < 5 || l > 254 {
 		return errors.New("Must be between 9 and 254 characters")
 	}
 
-	if !emailRegexp.MatchString(user) {
+	if !emailRegexp.MatchString(s) {
 		return errors.New("Improperly formatted email")
 	}
 

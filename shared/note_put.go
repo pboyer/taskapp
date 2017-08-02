@@ -1,7 +1,5 @@
 package shared
 
-package shared
-
 import (
 	"encoding/json"
 	"fmt"
@@ -14,7 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
-// NotePutFunc provides a function that adds or updates a task based on the event JSON. Setting generateNewID to true
+// NotePutFunc provides a function that adds or updates a note based on the event JSON. Setting generateNewID to true
 // causes a new Note ID to be generated, appropriate for insertion of a new note into the db
 func NotePutFunc(generateNewID bool) func(event json.RawMessage, actx *apex.Context) (interface{}, error) {
 	region := AWSRegion()
@@ -27,7 +25,7 @@ func NotePutFunc(generateNewID bool) func(event json.RawMessage, actx *apex.Cont
 	return func(event json.RawMessage, actx *apex.Context) (interface{}, error) {
 		var note Note
 
-		if err := json.Unmarshal(event, &task); err != nil {
+		if err := json.Unmarshal(event, &note); err != nil {
 			return nil, BadRequest(fmt.Sprintf("Failed to parse input: %v", err))
 		}
 
@@ -50,6 +48,6 @@ func NotePutFunc(generateNewID bool) func(event json.RawMessage, actx *apex.Cont
 			return nil, InternalServerError(err)
 		}
 
-		return task, nil
+		return note, nil
 	}
 }

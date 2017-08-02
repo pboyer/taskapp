@@ -2,6 +2,10 @@
 
 `taskapp` is a simple task list app. I used [apex](http://apex.run) for AWS lambda packaging/deployment. I used [Terraform](https://www.terraform.io/) for deployment of DynamoDB and API Gateway.
 
+* I stored my aws config and credentials in ~/.aws/config and ~/.aws/credentials 
+* You'll need to manually set the lambda credentials in project.json
+* Secrets should be stored in infrastructure/dev/secret.tfvars
+
 ## Project layout
 
 ```

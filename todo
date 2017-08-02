@@ -1,2 +1,9 @@
-Email endpoint
-User name verification
+Email endpoint, schedule
+
+task/list: sort
+Notes lambdas : share, unshare, get, update
+Notes terraform : 
+
+Include IAM for lambdas
+parameterize apigateway tests for stage
+update swagger.json with note schema
