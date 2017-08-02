@@ -119,7 +119,7 @@ module "task_delete" {
   request_templates = {
   "application/json" = <<EOF
 {
-  #if($input.params('updateTaskId'))"id" : "$input.params('updateTaskId')"#end
+  #if($input.params('deleteTaskId'))"id" : "$input.params('deleteTaskId')"#end
 }
 EOF
   }
