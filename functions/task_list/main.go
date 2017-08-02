@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
 	apex "github.com/apex/go-apex"
@@ -27,8 +28,6 @@ func main() {
 		if err := json.Unmarshal(event, &task); err != nil {
 			return nil, fmt.Errorf("Failed to parse input: %v", err)
 		}
-
-		return "true", nil
 
 		keyConds := []string{}
 		expAttNames := map[string]*string{}
@@ -72,6 +71,10 @@ func main() {
 			ExpressionAttributeValues: expAttValues,
 		}
 
+		if len(expAttValues) > 0 {
+			input.ExpressionAttributeNames = expAttNames
+		}
+
 		if len(expAttNames) > 0 {
 			input.ExpressionAttributeNames = expAttNames
 		}
@@ -80,7 +83,9 @@ func main() {
 
 		if err != nil {
 			// TODO log for reconaissance, give unique error code
-			return nil, fmt.Errorf("Internal error: %v", err)
+			fmt.Fprintln(os.Stderr, "Error in scan: %v", err)
+
+			return nil, fmt.Errorf("InternalError")
 		}
 
 		items := make([]*taskapp.Task, len(result.Items))
@@ -88,7 +93,7 @@ func main() {
 			task, err := taskapp.NewTaskFromAttributeValueMap(v)
 			if err != nil {
 				// TODO log for reconaissance, give unique error code
-				return nil, fmt.Errorf("Internal error: %v", err)
+				return nil, fmt.Errorf("InternalError")
 			}
 			items[i] = task
 		}

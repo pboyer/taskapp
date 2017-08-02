@@ -45,7 +45,9 @@ resource "aws_api_gateway_integration" "request_method_integration" {
   integration_http_method = "POST"
 }
 
-resource "aws_api_gateway_method_response" "response_method" {
+// Success
+
+resource "aws_api_gateway_method_response" "response_method_200" {
   rest_api_id = "${var.rest_api_id}"
   resource_id = "${var.resource_id}"
   http_method = "${aws_api_gateway_integration.request_method_integration.http_method}"
@@ -56,16 +58,65 @@ resource "aws_api_gateway_method_response" "response_method" {
   }
 }
 
-resource "aws_api_gateway_integration_response" "response_method_integration" {
+resource "aws_api_gateway_integration_response" "response_method_integration_200" {
   rest_api_id = "${var.rest_api_id}"
   resource_id = "${var.resource_id}"
-  http_method = "${aws_api_gateway_method_response.response_method.http_method}"
-  status_code = "${aws_api_gateway_method_response.response_method.status_code}"
-  selection_pattern = "-"
+  http_method = "${aws_api_gateway_method_response.response_method_200.http_method}"
+  status_code = "${aws_api_gateway_method_response.response_method_200.status_code}"
   response_templates = {
     "application/json" = ""
   }
 }
+
+// Bad Request
+
+resource "aws_api_gateway_method_response" "response_method_400" {
+  rest_api_id = "${var.rest_api_id}"
+  resource_id = "${var.resource_id}"
+  http_method = "${aws_api_gateway_integration_response.response_method_integration_200.http_method}"
+  status_code = "400"
+
+  response_models = {
+    "application/json" = "Empty"
+  }
+}
+
+resource "aws_api_gateway_integration_response" "response_method_integration_400" {
+  rest_api_id = "${var.rest_api_id}"
+  resource_id = "${var.resource_id}"
+  http_method = "${aws_api_gateway_method_response.response_method_400.http_method}"
+  status_code = "${aws_api_gateway_method_response.response_method_400.status_code}"
+  selection_pattern = "BadRequest.*"
+  response_templates = {
+    "application/json" = ""
+  }
+}
+
+// Internal Server Error
+
+resource "aws_api_gateway_method_response" "response_method_500" {
+  rest_api_id = "${var.rest_api_id}"
+  resource_id = "${var.resource_id}"
+  http_method = "${aws_api_gateway_integration_response.response_method_integration_400.http_method}"
+  status_code = "500"
+
+  response_models = {
+    "application/json" = "Empty"
+  }
+}
+
+resource "aws_api_gateway_integration_response" "response_method_integration_500" {
+  rest_api_id = "${var.rest_api_id}"
+  resource_id = "${var.resource_id}"
+  http_method = "${aws_api_gateway_method_response.response_method_500.http_method}"
+  status_code = "${aws_api_gateway_method_response.response_method_500.status_code}"
+  selection_pattern = "InternalServerError.*"
+  response_templates = {
+    "application/json" = ""
+  }
+}
+
+// Execution policy
 
 resource "aws_lambda_permission" "allow_api_gateway" {
   function_name = "${var.lambda}"
@@ -76,5 +127,5 @@ resource "aws_lambda_permission" "allow_api_gateway" {
 }
 
 output "http_method" {
-  value = "${aws_api_gateway_integration_response.response_method_integration.http_method}"
+  value = "${aws_api_gateway_integration_response.response_method_integration_500.http_method}"
 }

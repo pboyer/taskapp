@@ -33,7 +33,7 @@ func main() {
 		}
 
 		if req.ID == nil {
-			return nil, errors.New("Deletion requires a task 'id'")
+			return nil, errors.New("Error Deletion requires a task 'id'")
 		}
 
 		return svc.DeleteItem(&dynamodb.DeleteItemInput{
