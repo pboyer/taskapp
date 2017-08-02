@@ -7,5 +7,5 @@ import (
 )
 
 func main() {
-	apex.HandleFunc(taskapp.PutFunc(true))
+	apex.HandleFunc(taskapp.TaskPutFunc(true))
 }

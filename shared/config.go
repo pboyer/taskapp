@@ -21,9 +21,20 @@ func AWSRegion() string {
 	return r
 }
 
-// TableName provides the DynamoDB table name for this process
-func TableName() string {
-	r, ok := os.LookupEnv("TASKAPP_TABLE_NAME")
+// NotesTableName provides the DynamoDB notes table name for this process
+func NotesTableName() string {
+	r, ok := os.LookupEnv("TASKAPP_TASKS_TABLE_NAME")
+
+	if !ok {
+		return DefaultTableName
+	}
+
+	return r
+}
+
+// TasksTableName provides the DynamoDB tasks table name for this process
+func TasksTableName() string {
+	r, ok := os.LookupEnv("TASKAPP_TASKS_TABLE_NAME")
 
 	if !ok {
 		return DefaultTableName

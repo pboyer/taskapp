@@ -19,7 +19,7 @@ type response struct {
 
 func main() {
 	region := taskapp.AWSRegion()
-	tableName := taskapp.TableName()
+	tableName := taskapp.TasksTableName()
 
 	svc := dynamodb.New(session.New(&aws.Config{
 		Region: aws.String(region),
@@ -96,6 +96,15 @@ func main() {
 			}
 			items[i] = task
 		}
+
+		// func Slice(slice interface{}, less func(i, j int) bool)
+		// sort.Slice(items, func(i, j int) bool {
+		// 	t0 := items[i]
+		// 	t1 := items[j]
+
+		// 	if
+
+		// })
 
 		return response{items}, nil
 	})

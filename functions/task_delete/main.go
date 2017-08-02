@@ -20,7 +20,7 @@ type request struct {
 
 func main() {
 	region := taskapp.AWSRegion()
-	tableName := taskapp.TableName()
+	tableName := taskapp.TasksTableName()
 
 	svc := dynamodb.New(session.New(&aws.Config{
 		Region: aws.String(region),

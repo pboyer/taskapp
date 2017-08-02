@@ -1,0 +1,1 @@
+curl -H "Content-Type: application/json" -X POST --data "@test/fixtures/task_add0.json" https://ovfepswc3l.execute-api.us-east-1.amazonaws.com/dev/task

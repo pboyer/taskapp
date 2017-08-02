@@ -1,0 +1,1 @@
+curl -X GET https://ovfepswc3l.execute-api.us-east-1.amazonaws.com/dev/task/list?priority=0

@@ -12,7 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
-// Task is the fundamental unit of the app. See swagger.json for a full schema.
+// Task is a simple thing to do. See swagger.json for a full schema.
 type Task struct {
 	ID          *string `json:"id"` // DynamoDB partition key
 	User        *string `json:"user"`
@@ -124,9 +124,13 @@ var (
 
 func (t *Task) validateID() error {
 	if t.ID == nil {
-		return errors.New("'id' is a required attribute")
+		return errors.New("Attribute is required")
 	}
 
+	return validateIDString(s)
+}
+
+func validateIDString(s string) error {
 	if _, err := uuid.FromString(*t.ID); err != nil {
 		return err
 	}
@@ -139,10 +143,12 @@ func (t *Task) validateUser() error {
 		return nil
 	}
 
-	user := *t.User
+	return validateEmailString(*t.User)
+}
 
+func validateEmailString(s string) error {
 	if l := len(user); l < 5 || l > 254 {
-		return errors.New("'user' attribute must be between 9 and 254 characters")
+		return errors.New("Must be between 9 and 254 characters")
 	}
 
 	if !emailRegexp.MatchString(user) {
@@ -154,11 +160,11 @@ func (t *Task) validateUser() error {
 
 func (t *Task) validatePriority() error {
 	if t.Priority == nil {
-		return errors.New("'priority' is a required attribute")
+		return errors.New("Attribute is required")
 	}
 
 	if *t.Priority > 9 {
-		return errors.New("'priority' must be between 0 and 9")
+		return errors.New("Attribute must be between 0 and 9")
 	}
 
 	return nil
@@ -166,13 +172,13 @@ func (t *Task) validatePriority() error {
 
 func (t *Task) validateDescription() error {
 	if t.Description == nil {
-		return errors.New("'description' is a required attribute")
+		return errors.New("Attribute is required")
 	}
 
 	desc := *t.Description
 
 	if len(desc) < 1 {
-		return errors.New("The 'description' attribute must be at least 1 character long")
+		return errors.New("The attribute must be at least 1 character long")
 	}
 
 	return nil

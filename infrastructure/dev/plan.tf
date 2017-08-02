@@ -6,8 +6,20 @@ provider "aws" {
 
 # DynamoDB
 
-resource "aws_dynamodb_table" "taskapp" {
-  name           = "taskapp"
+resource "aws_dynamodb_table" "taskapp_tasks" {
+  name           = "taskapp_tasks"
+  read_capacity  = 5
+  write_capacity = 5
+  hash_key       = "id"
+
+  attribute {
+    name = "id"
+    type = "S"
+  }
+}
+
+resource "aws_dynamodb_table" "taskapp_notes" {
+  name           = "taskapp_notes"
   read_capacity  = 5
   write_capacity = 5
   hash_key       = "id"

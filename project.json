@@ -1,13 +1,14 @@
 {
   "name": "taskapp",
 	"profile": "taskapp",
-	"description": "A simple todo application implemented with modern serverless tech.",
+	"description": "A simple task list app implemented with modern serverless tech.",
   "memory": 128,
   "timeout": 10,
   "role": "arn:aws:iam::166473545606:role/taskapp_lambda_function",
   "defaultEnvironment": "dev",
   "environment": {
-    "TASKAPP_TABLE_NAME": "taskapp",
+    "TASKAPP_TASKS_TABLE_NAME": "taskapp_tasks",
+    "TASKAPP_NOTES_TABLE_NAME": "taskapp_notes",
     "TASKAPP_REGION": "us-east-1"
   }
 }
