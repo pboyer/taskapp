@@ -37,6 +37,7 @@ resource "aws_api_gateway_resource" "taskapp_res_task_list" {
   path_part   = "list"
 }
 
+// GET /task/list?user=foo&priority=12&description=foo&complete=date
 module "task_list" {
   source      = "./api_method"
   rest_api_id = "${aws_api_gateway_rest_api.taskapp.id}"
@@ -62,6 +63,7 @@ EOF
   }
 }
 
+// POST /task
 module "task_add" {
   source      = "./api_method"
   rest_api_id = "${aws_api_gateway_rest_api.taskapp.id}"
@@ -73,26 +75,54 @@ module "task_add" {
   account_id  = "${var.account_id}"
 }
 
+// PUT /task/{updateTaskId}
+resource "aws_api_gateway_resource" "taskapp_res_task_update" {
+  rest_api_id = "${aws_api_gateway_rest_api.taskapp.id}"
+  parent_id   = "${aws_api_gateway_resource.taskapp_res_task.id}"
+  path_part   = "{updateTaskId}"
+}
+
 module "task_update" {
   source      = "./api_method"
   rest_api_id = "${aws_api_gateway_rest_api.taskapp.id}"
-  resource_id = "${aws_api_gateway_resource.taskapp_res_task.id}"
+  resource_id = "${aws_api_gateway_resource.taskapp_res_task_update.id}"
   method      = "PUT"
-  path        = "${aws_api_gateway_resource.taskapp_res_task.path}"
+  path        = "${aws_api_gateway_resource.taskapp_res_task_update.path}"
   lambda      = "${var.apex_function_task_update}"
   region      = "${var.region}"
   account_id  = "${var.account_id}"
+  request_templates = {
+  "application/json" = <<EOF
+{
+  #if($input.params('updateTaskId'))"id" : "$input.params('updateTaskId')"#end
+}
+EOF
+  }
+}
+
+// DELETE /task/{deleteTaskId}
+resource "aws_api_gateway_resource" "taskapp_res_task_delete" {
+  rest_api_id = "${aws_api_gateway_rest_api.taskapp.id}"
+  parent_id   = "${aws_api_gateway_resource.taskapp_res_task.id}"
+  path_part   = "{deleteTaskId}"
 }
 
 module "task_delete" {
   source      = "./api_method"
   rest_api_id = "${aws_api_gateway_rest_api.taskapp.id}"
-  resource_id = "${aws_api_gateway_resource.taskapp_res_task.id}"
+  resource_id = "${aws_api_gateway_resource.taskapp_res_task_delete.id}"
   method      = "DELETE"
-  path        = "${aws_api_gateway_resource.taskapp_res_task.path}"
+  path        = "${aws_api_gateway_resource.taskapp_res_task_delete.path}"
   lambda      = "${var.apex_function_task_delete}"
   region      = "${var.region}"
   account_id  = "${var.account_id}"
+  request_templates = {
+  "application/json" = <<EOF
+{
+  #if($input.params('updateTaskId'))"id" : "$input.params('updateTaskId')"#end
+}
+EOF
+  }
 }
 
 resource "aws_api_gateway_deployment" "taskapp_deployment" {
