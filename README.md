@@ -2,7 +2,7 @@
 
 `taskapp` is a simple task list app. Users can create, modify, list, and delete tasks. Daily task list summaries are e-mailed to users. Users can also create notes and collaborate with other users on them.
 
-I used [apex](http://apex.run) for AWS lambda packaging/deployment. I used [Terraform](https://www.terraform.io/) for configuration and deployment of DynamoDB, API Gateway, and Cloudwatch alarms.
+I used [apex](http://apex.run) for AWS lambda packaging/deployment. The Lambdas are all implemented in Go. I used [Terraform](https://www.terraform.io/) for configuration and deployment of DynamoDB, API Gateway, and Cloudwatch alarms.
 
 ## Project layout
 
