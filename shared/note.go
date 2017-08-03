@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
+// Note represents a simple note sharable between users
 type Note struct {
 	ID            *string   `json:"id"`      // DynamoDB partition key
 	Creator       *string   `json:"creator"` // required

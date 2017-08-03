@@ -58,7 +58,7 @@ resource "aws_api_gateway_rest_api" "taskapp" {
   description = "A simple task list app"
 }
 
-# Task resources ---------------------------------------------------------------
+# Task resources
 
 resource "aws_api_gateway_resource" "taskapp_res_task" {
   rest_api_id = "${aws_api_gateway_rest_api.taskapp.id}"
@@ -176,7 +176,7 @@ EOF
   }
 }
 
-# Note resources ---------------------------------------------------------------
+# Note resources
 
 resource "aws_api_gateway_resource" "taskapp_res_note" {
   rest_api_id = "${aws_api_gateway_rest_api.taskapp.id}"
