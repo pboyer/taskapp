@@ -98,15 +98,3 @@ test/apigateway/task_add0.sh
 ```
 
 There are various similar tests in the directory. These are provided as useful debugging tools and could become proper automated integration tests in the future.
-
-
-[Example list call](https://ovfepswc3l.execute-api.us-east-1.amazonaws.com/dev/task/list?user=testy.mctester@example.com)
-
-* Incorporated unique, randomly generated ids into the project. Greatly simplified the API's.
-* You'll need to manually set the AWS IAM credentials in project.json
-* Example: https://ovfepswc3l.execute-api.us-east-1.amazonaws.com/dev/task/list?user=bar@baz.com
-* Could add many more error codes but ran out of time
-
-* Could have more robust tests, a load generator, better logging, but ran out of time.
-* Apex and terraform integrate poorly. It is painful to use IAM roles generated from terraform with apex.
-* Wish that Terraform supported swagger.json input.
