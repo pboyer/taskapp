@@ -9,15 +9,21 @@
     }
   },
   "basePath": "/v1",
-  "schemes": ["http"],
+  "schemes": [
+    "http"
+  ],
   "paths": {
     "/task": {
       "post": {
         "summary": "Add a task",
         "description": "",
         "operationId": "task_add",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
             "in": "body",
@@ -43,14 +49,27 @@
             "description": "Internal server error"
           }
         }
-      },
+      }
+    },
+    "/task/{taskId}": {
       "put": {
         "summary": "Update a task",
         "description": "",
         "operationId": "task_update",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "ID of task to delete",
+            "required": true,
+            "type": "string"
+          },
           {
             "in": "body",
             "name": "body",
@@ -75,14 +94,14 @@
             "description": "Internal server error"
           }
         }
-      }
-    },
-    "/task/{taskId}": {
+      },
       "delete": {
         "summary": "Delete a task",
         "description": "",
         "operationId": "task_delete",
-        "produces": ["application/json"],
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
             "name": "taskId",
@@ -107,7 +126,9 @@
         "summary": "List available tasks",
         "description": "These are returned in sorted order. The incomplete tasks come first and then are sorted by priority. Then from latest to oldest with ties broken by descending priority (0 is highest).",
         "operationId": "task_list",
-        "produces": ["application/json"],
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
             "name": "user",
@@ -163,8 +184,12 @@
         "summary": "Add a note",
         "description": "",
         "operationId": "note_add",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
             "in": "body",
@@ -197,7 +222,18 @@
         "summary": "Get a note.",
         "description": "",
         "operationId": "note_get",
-        "produces": ["application/json"],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "description": "ID of note to share",
+            "required": true,
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -217,9 +253,20 @@
         "summary": "Update a note with new text.",
         "description": "The originating user must be the creator of the note or a collaborator.",
         "operationId": "note_update",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "description": "ID of note to share",
+            "required": true,
+            "type": "string"
+          },
           {
             "in": "body",
             "name": "body",
@@ -244,72 +291,94 @@
             "description": "Internal server error"
           }
         }
-      },
-      "/note/share/{noteId}": {
-        "put": {
-          "summary": "Share a note.",
-          "description": "The originating user must be the creator of the note.",
-          "operationId": "note_share",
-          "consumes": ["application/json"],
-          "produces": ["application/json"],
-          "parameters": [
-            {
-              "in": "body",
-              "name": "body",
-              "description": "Note object to update",
-              "required": true,
-              "schema": {
-                "$ref": "#/definitions/ShareNoteRequest"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successful operation",
-              "schema": {
-                "$ref": "#/definitions/Note"
-              }
-            },
-            "400": {
-              "description": "Bad request"
-            },
-            "500": {
-              "description": "Internal server error"
+      }
+    },
+    "/note/share/{noteId}": {
+      "put": {
+        "summary": "Share a note.",
+        "description": "The originating user must be the creator of the note.",
+        "operationId": "note_share",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "description": "ID of note to share",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Note object to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ShareNoteRequest"
             }
           }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/Note"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
         }
-      },
-      "/note/unshare/{noteId}": {
-        "put": {
-          "summary": "Unshare a note. The originating user must be the creator of the note.",
-          "description": "",
-          "operationId": "note_unshare",
-          "consumes": ["application/json"],
-          "produces": ["application/json"],
-          "parameters": [
-            {
-              "in": "body",
-              "name": "body",
-              "description": "Note object to update",
-              "required": true,
-              "schema": {
-                "$ref": "#/definitions/UnshareNoteRequest"
-              }
+      }
+    },
+    "/note/unshare/{noteId}": {
+      "put": {
+        "summary": "Unshare a note. The originating user must be the creator of the note.",
+        "description": "",
+        "operationId": "note_unshare",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "description": "ID of note to unshare",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Note object to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UnshareNoteRequest"
             }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successful operation",
-              "schema": {
-                "$ref": "#/definitions/Note"
-              }
-            },
-            "400": {
-              "description": "Bad request"
-            },
-            "500": {
-              "description": "Internal server error"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/Note"
             }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -352,7 +421,10 @@
           "description": "Completed datetime, formatted as an ISO8601 string"
         }
       },
-      "required": ["description", "priority"]
+      "required": [
+        "description",
+        "priority"
+      ]
     },
     "Note": {
       "type": "object",
@@ -386,7 +458,10 @@
           "description": "A list of collaborators that can edit the text of the note"
         }
       },
-      "required": ["creator", "text"]
+      "required": [
+        "creator",
+        "text"
+      ]
     },
     "ShareNoteRequest": {
       "type": "object",
@@ -407,7 +482,10 @@
           "description": "The email address of the user to add as a collaborator"
         }
       },
-      "required": ["originating_user", "new_collaborator"]
+      "required": [
+        "originating_user",
+        "new_collaborator"
+      ]
     },
     "UnshareNoteRequest": {
       "type": "object",
@@ -428,7 +506,10 @@
           "description": "The email address of the user to remove as a collaborator"
         }
       },
-      "required": ["originating_user", "collaborator_to_remove"]
+      "required": [
+        "originating_user",
+        "collaborator_to_remove"
+      ]
     },
     "UpdateNoteRequest": {
       "type": "object",
@@ -448,7 +529,10 @@
           "description": "The new text for the note"
         }
       },
-      "required": ["originating_user", "text"]
+      "required": [
+        "originating_user",
+        "text"
+      ]
     }
   }
 }
