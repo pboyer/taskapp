@@ -1,5 +1,6 @@
 {
     "user": "foo@bar.com",
     "priority": 0,
-    "description": "A really cool task"
+    "description": "Another really cool task",
+    "completed": "2017-08-02T21:02:08-0400"
 }

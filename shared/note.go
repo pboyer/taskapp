@@ -35,6 +35,35 @@ func (n *Note) Validate() error {
 	return nil
 }
 
+func NewNoteFromAttributeValueMap(m map[string]*dynamodb.AttributeValue) (*Note, error) {
+	note := &Note{}
+
+	if id, ok := m["id"]; ok {
+		note.ID = id.S
+	}
+
+	if creator, ok := m["creator"]; ok {
+		note.Creator = creator.S
+	}
+
+	if text, ok := m["text"]; ok {
+		note.Text = text.S
+	}
+
+	if collaborators, ok := m["collaborators"]; ok {
+		note.Collaborators = collaborators.SS
+	}
+
+	// This validate step should never fail as its decoding data already entered into the DB.
+	// We do it anyways to avoid serving up invalid content in the event of failure. It could be
+	// turned off in future builds if performance justifies it.
+	if err := note.Validate(); err != nil {
+		return nil, err
+	}
+
+	return note, nil
+}
+
 // ToAttributeValueMap turns the Task as an AttributeValue map for use in Amazon DynamoDB API's. This function
 // does not validate the Note nor does it assume validation was completed.
 func (n *Note) ToAttributeValueMap() map[string]*dynamodb.AttributeValue {
@@ -72,7 +101,7 @@ func (n *Note) validateCreator() error {
 		return nil
 	}
 
-	return validateEmailString(*n.Creator)
+	return ValidateEmailString(*n.Creator)
 }
 
 func (n *Note) validateText() error {

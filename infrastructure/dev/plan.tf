@@ -35,7 +35,7 @@ resource "aws_dynamodb_table" "taskapp_notes" {
 resource "aws_cloudwatch_event_rule" "daily" {
     name = "daily"
     description = "Fires every five minutes"
-    schedule_expression = "rate(5 minutes)"
+    schedule_expression = "rate(1 day)"
 }
 
 resource "aws_cloudwatch_event_target" "task_daily" {
@@ -127,12 +127,24 @@ module "task_update" {
   method      = "PUT"
   path        = "${aws_api_gateway_resource.taskapp_res_task_update.path}"
   lambda      = "${var.apex_function_task_update}"
-  region      = "${var.region}"
+  region      = "us-east-1"
   account_id  = "${var.account_id}"
   request_templates = {
   "application/json" = <<EOF
 {
-  #if($input.params('updateTaskId'))"id" : "$input.params('updateTaskId')"#end
+  #if($input.params('updateTaskId'))
+    "id" : "$input.params('updateTaskId')"
+  #end
+  #set ($body = $util.parseJson($input.json('$')))
+  #if($body.keySet().size() > 0),#end
+  #foreach($param in $body.keySet())
+    #if($param == "priority")
+      "$param": $util.escapeJavaScript($body.get($param))
+    #{else}
+      "$param": "$util.escapeJavaScript($body.get($param))" 
+    #end
+    #if($foreach.hasNext),#end
+  #end
 }
 EOF
   }
@@ -232,6 +244,12 @@ module "note_update" {
   "application/json" = <<EOF
 {
   #if($input.params('updateNoteId'))"id" : "$input.params('updateNoteId')"#end
+  #set ($body = $util.parseJson($input.json('$')))
+  #if($body.keySet().size() > 0),#end
+  #foreach($param in $body.keySet())
+    "$param": "$util.escapeJavaScript($body.get($param))" 
+    #if($foreach.hasNext),#end
+  #end
 }
 EOF
   }

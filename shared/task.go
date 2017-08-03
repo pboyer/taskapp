@@ -143,10 +143,10 @@ func (t *Task) validateUser() error {
 		return nil
 	}
 
-	return validateEmailString(*t.User)
+	return ValidateEmailString(*t.User)
 }
 
-func validateEmailString(s string) error {
+func ValidateEmailString(s string) error {
 	if l := len(s); l < 5 || l > 254 {
 		return errors.New("Must be between 9 and 254 characters")
 	}
@@ -184,13 +184,20 @@ func (t *Task) validateDescription() error {
 	return nil
 }
 
+// ParseISO8601Time parses a string in that format into a time.Time struct
+func ParseISO8601Time(t string) (time.Time, error) {
+	return time.Parse("2006-01-02T15:04:05-0700", t)
+}
+
 func (t *Task) validateCompleted() error {
 	if t.Completed == nil {
 		return nil
 	}
 
-	completed := *t.Completed
+	_, err := ParseISO8601Time(*t.Completed)
+	if err == nil {
+		return err
+	}
 
-	_, err := time.Parse("2006-01-02T15:04:05Z07:00", completed)
 	return fmt.Errorf("Not a valid ISO8601 date: %v", err)
 }

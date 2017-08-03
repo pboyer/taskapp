@@ -17,7 +17,7 @@ func main() {
 	// }))
 
 	apex.HandleFunc(func(event json.RawMessage, actx *apex.Context) (interface{}, error) {
-		fmt.Fprintf(os.Stderr, "Daily event!")
+		fmt.Fprintf(os.Stderr, "Send emails!")
 
 		return "Success", nil
 	})

@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 
 	apex "github.com/apex/go-apex"
@@ -15,6 +16,42 @@ import (
 
 type response struct {
 	Items []*taskapp.Task `json:"items"`
+}
+
+type tasks []*taskapp.Task
+
+func (s tasks) Len() int {
+	return len(s)
+}
+
+func (s tasks) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+func (s tasks) Less(i, j int) bool {
+	t0 := s[i]
+	t1 := s[j]
+
+	if t0.Completed == nil {
+		if t1.Completed == nil {
+			return *t0.Priority < *t1.Priority
+		}
+
+		return true
+	}
+
+	if t1.Completed == nil {
+		return false
+	}
+
+	time0, _ := taskapp.ParseISO8601Time(*t0.Completed)
+	time1, _ := taskapp.ParseISO8601Time(*t1.Completed)
+
+	if time0.Equal(time1) {
+		return *t0.Priority < *t1.Priority
+	}
+
+	return time0.After(time1)
 }
 
 func main() {
@@ -97,14 +134,7 @@ func main() {
 			items[i] = task
 		}
 
-		// func Slice(slice interface{}, less func(i, j int) bool)
-		// sort.Slice(items, func(i, j int) bool {
-		// 	t0 := items[i]
-		// 	t1 := items[j]
-
-		// 	if
-
-		// })
+		sort.Sort(tasks(items))
 
 		return response{items}, nil
 	})
