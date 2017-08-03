@@ -8,15 +8,15 @@ I used [apex](http://apex.run) for AWS lambda packaging/deployment. I used [Terr
 
 ```
 * functions - Lambda function implementations, all in Go
-* infrastructure - Terraform (.tf) files for deployment of DynamoDB, API Gateway
+* infrastructure/dev - Terraform (.tf) files for deployment of dev stage
 * shared - Go package with shared utilities for the functions
 * test - Sanity checks for the system
 * bootstrap.sh - Installs apex and terraform on host machine.
 * deploy.sh - Deploys everything using apex, terraform
 * deps.sh - Installs go dependencies, of which there are few
 * init.sh - The script I ran to initiate the apex project (for completeness)
-* project.json - The apex project config
 * lambda_iam.json - The AWS IAM role for the lambdas.
+* project.json - The apex project config
 * README.md - See README.md
 * swagger.json - A swagger definition for the complete API
 ```
@@ -55,7 +55,9 @@ $ ./bootstrap.sh
 
 #### Lambda IAM Role
 
-Apex requires the IAM roles for the Lambdas to be created before deployment. This is not ideal. It would be preferrable to generate them with terraform. Presently it's necessary to manually generate the Lambda IAM role and policy and place the IAM role ARN in the project.json directory.
+Apex requires the IAM roles for the Lambdas to be created before deployment. This is not ideal. It would be preferrable to generate them with terraform. Presently, it's necessary to manually generate the Lambda IAM role and policy and place the IAM role ARN in the project.json directory.
+
+It would be much cleaner to have individual IAM roles for each lambda, but I ran out of time. There is only one.
 
 #### Apex credentials
 
@@ -104,7 +106,7 @@ There are various similar tests in the directory. These are provided as useful d
 * You'll need to manually set the AWS IAM credentials in project.json
 * Example: https://ovfepswc3l.execute-api.us-east-1.amazonaws.com/dev/task/list?user=bar@baz.com
 * Could add many more error codes but ran out of time
-* Sort of /task/list is O(n*logn)
+
 * Could have more robust tests, a load generator, better logging, but ran out of time.
 * Apex and terraform integrate poorly. It is painful to use IAM roles generated from terraform with apex.
 * Wish that Terraform supported swagger.json input.
