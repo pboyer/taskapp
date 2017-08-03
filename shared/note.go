@@ -98,7 +98,7 @@ func (n *Note) validateID() error {
 
 func (n *Note) validateCreator() error {
 	if n.Creator == nil {
-		return nil
+		return errors.New("Attribute is required")
 	}
 
 	return ValidateEmailString(*n.Creator)
