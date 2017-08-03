@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -24,16 +25,10 @@ func main() {
 	apex.HandleFunc(func(event json.RawMessage, actx *apex.Context) (interface{}, error) {
 		fmt.Fprintf(os.Stderr, "Sending emails")
 
-		keyCond := "completed = :c"
-		s := ""
-		expAttValues := map[string]*dynamodb.AttributeValue{
-			":c": &dynamodb.AttributeValue{S: &s},
-		}
-
+		keyCond := "attribute_not_exists(completed)"
 		input := &dynamodb.ScanInput{
-			TableName:                 &tableName,
-			FilterExpression:          &keyCond,
-			ExpressionAttributeValues: expAttValues,
+			TableName:        &tableName,
+			FilterExpression: &keyCond,
 		}
 
 		result, err := svc.Scan(input)
@@ -62,12 +57,14 @@ func main() {
 			userTaskLists[*task.User] = append(list, task)
 		}
 
-		// We do NOT send the emails here. This could be added once proper authentication, authorization,
-		// subscription, and unsubscription is implemented.
-		for u, list := range userTaskLists {
-			fmt.Fprintf(os.Stderr, "Sending emails to %s: %v", u, list)
-		}
+		// We do NOT send the emails here.
 
-		return "Success", nil
+		// This could be added once proper authentication, authorization,
+		// subscription, and unsubscription is implemented.
+		b := &bytes.Buffer{}
+		for u, list := range userTaskLists {
+			fmt.Fprintf(b, "Sending emails to %s: %v\n", u, list)
+		}
+		return b.String(), nil
 	})
 }
