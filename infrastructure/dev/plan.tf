@@ -282,6 +282,12 @@ module "note_share" {
   "application/json" = <<EOF
 {
   #if($input.params('shareNoteId'))"id" : "$input.params('shareNoteId')"#end
+  #set ($body = $util.parseJson($input.json('$')))
+  #if($body.keySet().size() > 0),#end
+  #foreach($param in $body.keySet())
+    "$param": "$util.escapeJavaScript($body.get($param))" 
+    #if($foreach.hasNext),#end
+  #end
 }
 EOF
   }
@@ -314,6 +320,12 @@ module "note_unshare" {
   "application/json" = <<EOF
 {
   #if($input.params('unshareNoteId'))"id" : "$input.params('unshareNoteId')"#end
+  #set ($body = $util.parseJson($input.json('$')))
+  #if($body.keySet().size() > 0),#end
+  #foreach($param in $body.keySet())
+    "$param": "$util.escapeJavaScript($body.get($param))" 
+    #if($foreach.hasNext),#end
+  #end
 }
 EOF
   }

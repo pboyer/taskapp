@@ -1,0 +1,4 @@
+{
+    "originating_user": "foo@bar.com",
+    "collaborator_to_remove": "bar@baz.com"
+}

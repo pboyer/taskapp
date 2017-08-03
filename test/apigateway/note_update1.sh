@@ -1,0 +1,1 @@
+curl -H "Content-Type: application/json" -X PUT --data "@test/fixtures/note_update1.json" https://ovfepswc3l.execute-api.us-east-1.amazonaws.com/dev/note/2717a7f6-88f7-4a33-9c9c-9351fcda7d2b
