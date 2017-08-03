@@ -2,5 +2,5 @@
     "user": "bar@baz.com",
     "priority": 8,
     "description": "WOW",
-    "completed": "2017-08-02T21:02:08-0400"
+    "completed": "2017-08-02T21:02:08-04:00"
 }

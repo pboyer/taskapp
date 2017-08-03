@@ -1,6 +1,7 @@
 package shared
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"regexp"
@@ -74,9 +75,6 @@ func NewTaskFromAttributeValueMap(m map[string]*dynamodb.AttributeValue) (*Task,
 
 	if completed, ok := m["completed"]; ok {
 		task.Completed = completed.S
-	} else {
-		s := ""
-		task.Completed = &s
 	}
 
 	// This validate step should never fail as its decoding data already entered into the DB.
@@ -114,9 +112,6 @@ func (t *Task) ToAttributeValueMap() map[string]*dynamodb.AttributeValue {
 
 	if t.Completed != nil {
 		res["completed"] = &dynamodb.AttributeValue{S: t.Completed}
-	} else {
-		s := ""
-		res["completed"] = &dynamodb.AttributeValue{S: &s}
 	}
 
 	return res
@@ -192,7 +187,7 @@ func (t *Task) validateDescription() error {
 
 // ParseISO8601Time parses a string in that format into a time.Time struct
 func ParseISO8601Time(t string) (time.Time, error) {
-	return time.Parse("2006-01-02T15:04:05-0700", t)
+	return time.Parse("2006-01-02T15:04:05-07:00", t)
 }
 
 func (t *Task) validateCompleted() error {
@@ -210,4 +205,28 @@ func (t *Task) validateCompleted() error {
 	}
 
 	return fmt.Errorf("Not a valid ISO8601 date: %v", err)
+}
+
+// MarshalJSON marshals a task to json, setting the completed field to "" when empty
+// as expected by the examples
+func (t *Task) MarshalJSON() ([]byte, error) {
+	completed := t.Completed
+	if completed == nil {
+		c := ""
+		completed = &c
+	}
+
+	return json.Marshal(&struct {
+		ID          *string `json:"id"`
+		User        *string `json:"user"`
+		Description *string `json:"description"`
+		Priority    *uint32 `json:"priority"`
+		Completed   *string `json:"completed"`
+	}{
+		ID:          t.ID,
+		User:        t.User,
+		Description: t.Description,
+		Priority:    t.Priority,
+		Completed:   completed,
+	})
 }
