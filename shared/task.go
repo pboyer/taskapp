@@ -74,6 +74,9 @@ func NewTaskFromAttributeValueMap(m map[string]*dynamodb.AttributeValue) (*Task,
 
 	if completed, ok := m["completed"]; ok {
 		task.Completed = completed.S
+	} else {
+		s := ""
+		task.Completed = &s
 	}
 
 	// This validate step should never fail as its decoding data already entered into the DB.
@@ -111,6 +114,9 @@ func (t *Task) ToAttributeValueMap() map[string]*dynamodb.AttributeValue {
 
 	if t.Completed != nil {
 		res["completed"] = &dynamodb.AttributeValue{S: t.Completed}
+	} else {
+		s := ""
+		res["completed"] = &dynamodb.AttributeValue{S: &s}
 	}
 
 	return res
@@ -191,6 +197,10 @@ func ParseISO8601Time(t string) (time.Time, error) {
 
 func (t *Task) validateCompleted() error {
 	if t.Completed == nil {
+		return nil
+	}
+
+	if *t.Completed == "" {
 		return nil
 	}
 

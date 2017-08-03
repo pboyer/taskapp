@@ -32,15 +32,15 @@ func (s tasks) Less(i, j int) bool {
 	t0 := s[i]
 	t1 := s[j]
 
-	if t0.Completed == nil {
-		if t1.Completed == nil {
+	if t0.Completed == nil || *t0.Completed == "" {
+		if t1.Completed == nil || *t1.Completed == "" {
 			return *t0.Priority < *t1.Priority
 		}
 
 		return true
 	}
 
-	if t1.Completed == nil {
+	if t1.Completed == nil || *t1.Completed == "" {
 		return false
 	}
 

@@ -1,8 +1,4 @@
-test sorting
-test task api gateway endpoints for task
-
 Include IAM for lambdas
-parameterize apigateway tests for stage
 update swagger.json with note schema
-
 better testing
+better sample data

@@ -5,6 +5,7 @@
 * I stored my aws config and credentials in ~/.aws/config and ~/.aws/credentials 
 * You'll need to manually set the lambda credentials in project.json
 * Secrets should be stored in infrastructure/dev/secret.tfvars
+* Example: https://ovfepswc3l.execute-api.us-east-1.amazonaws.com/dev/task/list?user=bar@baz.com
 
 ## Project layout
 
