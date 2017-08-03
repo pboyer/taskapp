@@ -73,7 +73,7 @@ func NewTaskFromAttributeValueMap(m map[string]*dynamodb.AttributeValue) (*Task,
 	}
 
 	if completed, ok := m["completed"]; ok {
-		task.Completed = completed.N
+		task.Completed = completed.S
 	}
 
 	// This validate step should never fail as its decoding data already entered into the DB.

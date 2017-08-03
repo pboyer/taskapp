@@ -3,8 +3,11 @@ package shared
 import "os"
 
 const (
-	// DefaultTableName is the name of the DynamoDB table name for this app
-	DefaultTableName = "taskapp"
+	// DefaultNotesTableName is the name of the DynamoDB table name for this app for notes
+	DefaultNotesTableName = "taskapp_notes"
+
+	// DefaultTasksTableName is the name of the DynamoDB table name for this app for tasks
+	DefaultTasksTableName = "taskapp_tasks"
 
 	// DefaultAWSRegion is the default for the region for this app
 	DefaultAWSRegion = "us-east-1"
@@ -23,10 +26,10 @@ func AWSRegion() string {
 
 // NotesTableName provides the DynamoDB notes table name for this process
 func NotesTableName() string {
-	r, ok := os.LookupEnv("TASKAPP_TASKS_TABLE_NAME")
+	r, ok := os.LookupEnv("TASKAPP_NOTES_TABLE_NAME")
 
 	if !ok {
-		return DefaultTableName
+		return DefaultNotesTableName
 	}
 
 	return r
@@ -37,7 +40,7 @@ func TasksTableName() string {
 	r, ok := os.LookupEnv("TASKAPP_TASKS_TABLE_NAME")
 
 	if !ok {
-		return DefaultTableName
+		return DefaultTasksTableName
 	}
 
 	return r
