@@ -105,7 +105,7 @@
     "/task/list": {
       "get": {
         "summary": "List available tasks",
-        "description": "",
+        "description": "These are returned in sorted order. The incomplete tasks come first and then are sorted by priority. Then from latest to oldest with ties broken by descending priority (0 is highest).",
         "operationId": "task_list",
         "produces": ["application/json"],
         "parameters": [

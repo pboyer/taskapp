@@ -1,0 +1,1 @@
+curl -H "Content-Type: application/json" -X DELETE https://ovfepswc3l.execute-api.us-east-1.amazonaws.com/dev/task/%1
